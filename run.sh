@@ -28,7 +28,7 @@ mkdir -p /gpfs/home1/pz29075/Capstone/KG_StockMixer/logs
 source /home1/pz29075/miniconda3/etc/profile.d/conda.sh
 conda activate stockmixer
 
-# export WANDB_API_KEY="your_wandb_api_key_here"
+export WANDB_API_KEY="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"
 
 cd /gpfs/home1/pz29075/Capstone/KG_StockMixer
 python main.py "$@"

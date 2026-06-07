@@ -95,9 +95,42 @@ relation/llm_dynamic_{year}/NASDAQ_llm_dynamic_relation.npy
 shape: (1026, 1026, 8)  — 8가지 관계 타입
 ```
 
-완성 연도 (2026-06-04 기준): 2013 ✅, 2014 ✅, 2015 ✅, 2016 🔄, 2017 🔄
+완성 연도 (2026-06-04 기준): 2013 ✅, 2014 ✅, 2015 ✅, 2016 ✅, 2017 ✅
+
+---
+
+## 실험 결과 및 실패 원인
+
+**GAT+LLMDynamic: IC = 0.0153 — baseline(0.0156) 미달**
+
+### 실패 원인 분석
+
+**1. Temporal masking 신뢰 불가**
+```python
+f"Do NOT use knowledge of events after December 31, {cutoff}."
+```
+GPT는 실제로 특정 연도까지의 지식을 격리하지 못함.  
+프롬프트 수준 제약은 soft constraint — 이후 정보가 섞일 수 있음.
+
+**2. 양방향 필터가 sparsity 심화**  
+교차검증 통과 엣지가 너무 줄어들어 GAT가 참고할 연결이 부족.
+
+**3. 파라메트릭 지식의 한계**  
+GPT 내장 지식 = 학습 데이터에서 통계적으로 자주 나온 관계.  
+뉴스처럼 "그 해 시장이 실제로 주목한 관계"가 아님.  
+→ 주가 공동움직임과의 연관성이 NewsDynamic보다 낮음.
+
+### NewsDynamic과 비교
+
+| | NewsDynamic | LLMDynamic |
+|--|-------------|------------|
+| 정보 소스 | FMP 뉴스 (외부 텍스트) | GPT 내장 지식 (파라메트릭) |
+| Look-ahead 방지 | 연도 뉴스만 수집 (완전) | 시간 마스킹 프롬프트 (불완전) |
+| IC (test) | 0.0201 | 0.0153 |
+| 결론 | 유의미한 개선 | baseline 미달 |
 
 ---
 
 ## [[04-Self-Consistency-Voting]] 참고
 ## [[03-실험결과-비교]] 에서 llm_dynamic 실험 결과 확인
+## [[06-news]] 와 비교: 뉴스 기반 vs 파라메트릭 지식

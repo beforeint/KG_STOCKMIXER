@@ -26,7 +26,7 @@ N          = len(tickers)
 ticker_idx = {t: i for i, t in enumerate(tickers)}
 ticker_set = set(tickers)
 
-FMP_KEY      = os.environ.get('FMP_API_KEY', '')
+FMP_KEY      = 'Zi2COg4uCt0j0fCQQCdlR628qrbuF5aE'
 FMP_NEWS_URL = 'https://financialmodelingprep.com/stable/news/stock'
 
 #%%
